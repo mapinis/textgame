@@ -1,34 +1,40 @@
 import random as rand
 
+def generateLoot(cls):
+    setattr(cls, "healthBuff", 0)
+    setattr(cls, "strengthBuff", 0)
+    setattr(cls, "lootType", ("health potion", "strength potion", "surprise")[rand.randint(0, 2)])
+    if(getattr(cls, "lootType") == "health potion"):
+        setattr(cls, "healthBuff", rand.randint(5, 30))
+    elif(getattr(cls, "lootType") == "strength potion"):
+        setattr(cls, "strengthBuff", rand.randint(5, 30))
+    return cls
+
+@generateLoot
+class Loot(object):
+    pass
+
+def generatePlace(cls):
+    setattr(cls, "setting", ("cave", "forest", "fork", "camp")[rand.randint(0, 3)])
+    if(getattr(cls, "setting") == "fork"):
+        setattr(cls, "event", "choice")
+    elif(getattr(cls, "setting") == "camp"):
+        setattr(cls, "event", "safety" if rand.randint(0, 100) <= 75 else "fight")
+        setattr(cls, "loot", Loot())
+    else:
+        setattr(cls, "event", ("fight", "loot")[rand.randint(0, 1)])
+        setattr(cls, "loot", Loot())
+    setattr(cls, "looted", False)
+    return cls
+
+@generatePlace
 class Place(object):
-    setting = 0
-    lootType = 0
-    healthBuff = 0
-    strengthBuff = 0
-    event = 0
-    done = 0
+    pass
 
-    def generateLoot(self):
-        self.lootType = ("health potion", "strength potion", "surprise")[rand.randint(0, 2)]
-        if(self.lootType == "health potion"):
-            self.healthBuff = rand.randint(5, 30)
-        elif(self.lootType == "strength potion"):
-            self.strengthBuff = rand.randint(5, 30)
-    
-    def __init__(self):
-        self.setting = ("cave", "forest", "fork", "camp")[rand.randint(0, 3)]
-        if(self.setting == "fork"):
-            self.event == "choice"
-        elif(self.setting == "camp"):
-            self.event = "safety" if rand.randint(0, 100) <= 75 else "fight"
-            self.generateLoot()
-        else:
-            self.event = ("fight", "loot")[rand.randint(0, 1)]
-            self.generateLoot()
-
-        self.done = False
-    
-for x in range(0, 3):
-    place = Place()
-    print(place.setting, place.event, place.lootType, place.healthBuff, place.strengthBuff)
+place = Place()
+print(place.setting, place.event, place.loot.healthBuff, place.loot.strengthBuff)
+place1 = Place()
+print(place1.setting, place1.event, place1.loot.healthBuff, place1.loot.strengthBuff)
+place2 = Place()
+print(place2.setting, place2.event, place2.loot.healthBuff, place2.loot.strengthBuff)
         
