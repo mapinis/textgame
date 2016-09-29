@@ -1,40 +1,29 @@
-import random as rand
+# Place Creation Mostly By: Aaron Goidel
+# Big thanks to him!
 
-def generateLoot(cls):
-    setattr(cls, "healthBuff", 0)
-    setattr(cls, "strengthBuff", 0)
-    setattr(cls, "lootType", ("health potion", "strength potion", "surprise")[rand.randint(0, 2)])
-    if(getattr(cls, "lootType") == "health potion"):
-        setattr(cls, "healthBuff", rand.randint(5, 30))
-    elif(getattr(cls, "lootType") == "strength potion"):
-        setattr(cls, "strengthBuff", rand.randint(5, 30))
-    return cls
+from random import randint
 
-@generateLoot
-class Loot(object):
-    pass
+class Setting():
+    locations = ["cave", "forest", "fork", "camp"]
+    events = ["safety", "choice", "fight", "loot"]
 
-def generatePlace(cls):
-    setattr(cls, "setting", ("cave", "forest", "fork", "camp")[rand.randint(0, 3)])
-    if(getattr(cls, "setting") == "fork"):
-        setattr(cls, "event", "choice")
-    elif(getattr(cls, "setting") == "camp"):
-        setattr(cls, "event", "safety" if rand.randint(0, 100) <= 75 else "fight")
-        setattr(cls, "loot", Loot())
-    else:
-        setattr(cls, "event", ("fight", "loot")[rand.randint(0, 1)])
-        setattr(cls, "loot", Loot())
-    setattr(cls, "looted", False)
-    return cls
+    def __init__(self, locationNum, eventNum):
+        self.location = self.locations[locationNum]
+        self.event = self.events[eventNum]
 
-@generatePlace
+
 class Place(object):
-    pass
+    cave = Setting(locationNum=0, eventNum=randint(2, 3))
+    forest = Setting(locationNum=1, eventNum=randint(2, 3))
+    fork = Setting(locationNum=2, eventNum=1)
+    camp = Setting(locationNum=3, eventNum=0 if randint(0, 100) <= 75 else 2)
+    settings = [cave, forest, fork, camp]
 
-place = Place()
-print(place.setting, place.event, place.loot.healthBuff, place.loot.strengthBuff)
-place1 = Place()
-print(place1.setting, place1.event, place1.loot.healthBuff, place1.loot.strengthBuff)
-place2 = Place()
-print(place2.setting, place2.event, place2.loot.healthBuff, place2.loot.strengthBuff)
-        
+    def __init__(self, settingId):
+        self.setting = self.settings[settingId]
+
+    def __str__(self):
+        return "Setting: %s, Event: %s" %(self.setting.location, self.setting.event)
+
+for x in range(0,3):
+    print(Place(randint(0, 3)))
