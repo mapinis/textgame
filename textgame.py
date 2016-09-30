@@ -2,28 +2,40 @@
 # Big thanks to him!
 
 from random import randint
+class Loot(object):
+    loots = ["health", "strength", "surprise"]
+    buff = 0
+
+    def __init__(self, lootNum):
+        self.loot = self.loots[lootNum]
+        self.buff = randint(5, 30) if lootNum != 2 else None
 
 class Setting():
     locations = ["cave", "forest", "fork", "camp"]
-    events = ["safety", "choice", "fight", "loot"]
+    events = ["choice", "safety", "fight", "loot"]
 
     def __init__(self, locationNum, eventNum):
         self.location = self.locations[locationNum]
-        self.event = self.events[eventNum]
+        if(locationNum == 2):
+            self.event = self.events[0]
+        elif(locationNum == 3):
+            self.event = self.events[1] if randint(0, 100) < 75 else self.events[2]
+        else:
+            self.event = self.events[eventNum]
 
 
 class Place(object):
-    cave = Setting(locationNum=0, eventNum=randint(2, 3))
-    forest = Setting(locationNum=1, eventNum=randint(2, 3))
-    fork = Setting(locationNum=2, eventNum=1)
-    camp = Setting(locationNum=3, eventNum=0 if randint(0, 100) <= 75 else 2)
-    settings = [cave, forest, fork, camp]
-
-    def __init__(self, settingId):
-        self.setting = self.settings[settingId]
+    def __init__(self, locationNum, eventNum, lootNum):
+        self.setting = Setting(locationNum, eventNum)
+        self.loot = None
+        if(self.setting.event != "safety" and self.setting.event != "choice"):
+            self.loot = Loot(lootNum)
 
     def __str__(self):
-        return "Setting: %s, Event: %s" %(self.setting.location, self.setting.event)
+        if(self.loot != None):
+            return "Setting: %s, Event: %s, Loot %s, Buff %s" %(self.setting.location, self.setting.event, self.loot.loot, self.loot.buff)
+        else:
+            return "Setting: %s, Event: %s, Loot None" %(self.setting.location, self.setting.event)
 
-for x in range(0,3):
-    print(Place(randint(0, 3)))
+for x in range(0,4):
+    print(Place(randint(0, 3), randint(1, 3), randint(0, 2)))
